@@ -126,7 +126,6 @@ edgechat/
 
 [![贡献者](https://contrib.rocks/image?repo=gdz66601/Edgechat)](https://github.com/gdz66601/Edgechat/graphs/contributors)
 
-- Jack Yao 在 [PR #8](https://github.com/gdz66601/Edgechat/pull/8) 中提供了多项安全审查修复建议；当前版本已采纳其中低风险且可独立落地的部分。
 
 ## 鸣谢
 
