@@ -32,7 +32,6 @@ async function submit() {
     <div class="page-card login-card">
       <p class="tag">欢迎回来</p>
       <h1 class="title">{{ store.site.siteName }}</h1>
-      <p class="subtitle">登录后即可继续与团队协作，消息与进展一目了然。</p>
       <p v-if="registered" class="muted">注册成功，现在可以使用新账号登录。</p>
 
       <form @submit.prevent="submit">

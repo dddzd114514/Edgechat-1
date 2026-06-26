@@ -37,7 +37,6 @@ const currentTitle = computed(
         <div class="admin-shell__brand">
           <p class="admin-shell__kicker">System Console</p>
           <h1 class="admin-shell__title">管理后台</h1>
-          <p class="admin-shell__subtitle">统一处理用户、消息与站点配置，保持操作路径清晰可追踪。</p>
         </div>
 
         <nav class="admin-shell__nav">
@@ -56,7 +55,6 @@ const currentTitle = computed(
 
         <UiSurface tone="soft" class="admin-shell__sidebar-card">
           <strong>当前模块：{{ currentTitle }}</strong>
-          <p>后台仅负责治理与审计，实时沟通入口保持在聊天主界面。</p>
           <div class="inline-actions">
             <UiButton variant="secondary" size="sm" @click="router.push('/')">返回聊天</UiButton>
             <UiButton variant="ghost" size="sm" @click="router.push('/settings')">个人设置</UiButton>
