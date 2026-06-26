@@ -12,6 +12,13 @@ export function errorResponse(message, status = 400) {
   return jsonResponse({ error: message }, { status });
 }
 
+export const MAX_JSON_BODY_SIZE = 10 * 1024 * 1024;
+
+export function requestBodyTooLarge(request, maxBytes = MAX_JSON_BODY_SIZE) {
+  const contentLength = Number(request.headers.get('content-length') || 0);
+  return Number.isFinite(contentLength) && contentLength > maxBytes;
+}
+
 export function parseJsonRequest(request) {
   return request.json().catch(() => ({}));
 }

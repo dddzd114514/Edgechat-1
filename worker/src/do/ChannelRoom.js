@@ -6,6 +6,7 @@ const INTERNAL_AUTH_HEADER = 'x-cfchat-internal-auth';
 const VERIFIED_USER_ID_HEADER = 'x-cfchat-verified-user-id';
 const VERIFIED_IS_ADMIN_HEADER = 'x-cfchat-verified-is-admin';
 const VERIFIED_AT_HEADER = 'x-cfchat-verified-at';
+const MESSAGE_SIZE_LIMIT = 10 * 1024;
 
 function socketMeta(principal, room) {
   return {
@@ -20,6 +21,34 @@ function sendSocketError(ws, message) {
   } catch {
     // Ignore broken sockets.
   }
+}
+
+function getMessageByteLength(message) {
+  if (typeof message === 'string') {
+    return new TextEncoder().encode(message).length;
+  }
+  if (message instanceof ArrayBuffer) {
+    return message.byteLength;
+  }
+  if (ArrayBuffer.isView(message)) {
+    return message.byteLength;
+  }
+
+  // 未知 WebSocket 消息类型无法可靠解析，按超大处理，避免绕过大小限制。
+  return Number.MAX_SAFE_INTEGER;
+}
+
+function normalizeWebSocketMessage(message) {
+  if (typeof message === 'string') {
+    return message;
+  }
+  if (message instanceof ArrayBuffer) {
+    return new TextDecoder().decode(message);
+  }
+  if (ArrayBuffer.isView(message)) {
+    return new TextDecoder().decode(message);
+  }
+  return '';
 }
 
 function parseVerifiedPrincipal(request) {
@@ -134,7 +163,12 @@ export class ChannelRoom {
       return;
     }
 
-    const payload = this.parsePayload(ws, message);
+    if (getMessageByteLength(message) > MESSAGE_SIZE_LIMIT) {
+      sendSocketError(ws, `消息过大，最大 ${Math.round(MESSAGE_SIZE_LIMIT / 1024)}KB`);
+      return;
+    }
+
+    const payload = this.parsePayload(ws, normalizeWebSocketMessage(message));
     if (!payload) {
       return;
     }

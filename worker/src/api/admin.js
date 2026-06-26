@@ -3,6 +3,11 @@ import { getSiteSettings, listMessages, requireAccessibleRoom, updateSiteSetting
 import { ApiError } from '../errors.js';
 import { errorResponse, parseJsonRequest, randomToken, sanitizeLimit } from '../utils.js';
 
+function escapeSqlLike(value) {
+  // LIKE 的 %、_ 和转义符本身会改变匹配范围，转义后才能按用户输入字面量搜索。
+  return value.replace(/[\\%_]/g, '\\$&');
+}
+
 export function registerAdminRoutes(app) {
   app.get('/api/admin/overview', async (c) => {
     const [usersResult, channelsResult, dmsResult, site] = await Promise.all([
@@ -335,8 +340,9 @@ export function registerAdminRoutes(app) {
     const binds = [];
 
     if (keyword) {
-      filters.push('(m.content LIKE ? OR m.attachment_name LIKE ?)');
-      binds.push(`%${keyword}%`, `%${keyword}%`);
+      const escapedKeyword = escapeSqlLike(keyword);
+      filters.push("(m.content LIKE ? ESCAPE '\\' OR m.attachment_name LIKE ? ESCAPE '\\')");
+      binds.push(`%${escapedKeyword}%`, `%${escapedKeyword}%`);
     }
 
     if (Number.isFinite(channelId)) {

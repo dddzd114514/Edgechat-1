@@ -20,13 +20,27 @@ import { ChannelRoom } from './do/ChannelRoom.js';
 import { Scheduler } from './do/Scheduler.js';
 import { UserInbox } from './do/UserInbox.js';
 import { runScheduledGc } from './gc.js';
-import { errorResponse, parseJsonRequest, publicFileUrl } from './utils.js';
+import {
+  errorResponse,
+  parseJsonRequest,
+  publicFileUrl,
+  requestBodyTooLarge
+} from './utils.js';
 
 const app = new Hono();
 const INTERNAL_AUTH_HEADER = 'x-cfchat-internal-auth';
 const VERIFIED_USER_ID_HEADER = 'x-cfchat-verified-user-id';
 const VERIFIED_IS_ADMIN_HEADER = 'x-cfchat-verified-is-admin';
 const VERIFIED_AT_HEADER = 'x-cfchat-verified-at';
+
+app.use('/api/*', async (c, next) => {
+  if (requestBodyTooLarge(c.req.raw)) {
+    // 提前拒绝超大请求体，避免 Worker 在 JSON 解析前消耗过多内存。
+    return errorResponse('请求体过大', 413);
+  }
+
+  await next();
+});
 
 app.use('/api/*', cors({
   origin: '*',

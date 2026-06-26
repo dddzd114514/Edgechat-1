@@ -4,6 +4,14 @@ const DEFAULT_BATCH_SIZE = 500;
 const DEFAULT_MAX_BATCHES_PER_RUN = 20;
 const DEFAULT_R2_DELETE_MAX_RETRY = 8;
 const MAX_ERROR_LENGTH = 500;
+const DELETE_ALLOWED_IDENTIFIERS = {
+  messages: new Set(['id', 'channel_id', 'sender_id']),
+  registration_invites: new Set(['id']),
+  channels: new Set(['id']),
+  channel_members: new Set(['channel_id', 'user_id']),
+  users: new Set(['id'])
+};
+const MESSAGE_ATTACHMENT_LOOKUP_COLUMNS = new Set(['id', 'channel_id', 'sender_id']);
 
 function toPositiveInteger(value, fallback) {
   const parsed = Number(value);
@@ -41,6 +49,14 @@ function safeErrorMessage(error) {
 
 function placeholders(length) {
   return Array.from({ length }, () => '?').join(', ');
+}
+
+function assertAllowedIdentifier(tableName, columnName, allowedIdentifiers) {
+  const allowedColumns = allowedIdentifiers[tableName];
+  if (!allowedColumns?.has(columnName)) {
+    // 表名和列名不能用 bind 参数，必须用白名单限制动态 SQL 的可选范围。
+    throw new Error('Invalid GC query identifier');
+  }
 }
 
 function uniqueKeys(keys) {
@@ -167,6 +183,8 @@ async function markR2RetryFailure(db, key, retryCount, delayMinutes, errorMessag
 }
 
 async function deleteRowsByIds(db, tableName, columnName, ids, extraSql = '') {
+  assertAllowedIdentifier(tableName, columnName, DELETE_ALLOWED_IDENTIFIERS);
+
   if (!ids.length) {
     return 0;
   }
@@ -182,6 +200,11 @@ async function deleteRowsByIds(db, tableName, columnName, ids, extraSql = '') {
 }
 
 async function collectMessageAttachmentsByColumn(db, columnName, ids) {
+  if (!MESSAGE_ATTACHMENT_LOOKUP_COLUMNS.has(columnName)) {
+    // 只允许当前 GC 调用到的 messages 列，避免新增调用时误把用户输入拼进 SQL。
+    throw new Error('Invalid GC attachment lookup column');
+  }
+
   if (!ids.length) {
     return [];
   }
