@@ -126,8 +126,6 @@ edgechat/
 
 [![贡献者](https://contrib.rocks/image?repo=gdz66601/Edgechat)](https://github.com/gdz66601/Edgechat/graphs/contributors)
 
-- 。
-
 ## 鸣谢
 
 感谢 <a href="https://linux.do" target="_blank">linux do</a> 在推广方面为本项目做出的贡献。
