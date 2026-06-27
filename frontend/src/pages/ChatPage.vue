@@ -449,13 +449,14 @@ onBeforeUnmount(() => {
                     size="sm"
                     class="chat-bubble-row__avatar"
                   />
+                  <!-- 气泡：纯视觉结构调整，发送者名置于顶部（仅对方），时间置于右下角，模仿 WhatsApp -->
                   <div class="chat-bubble" :class="bubbleClass(message, index)">
-                    <div class="chat-bubble__meta">
-                      <strong>{{ isOwnMessage(message) ? '我' : message.sender.displayName }}</strong>
-                      <span>{{ formatTime(message.createdAt) }}</span>
-                    </div>
+                    <span v-if="!isOwnMessage(message)" class="chat-bubble__sender">
+                      {{ message.sender.displayName }}
+                    </span>
                     <p v-if="message.content">{{ message.content }}</p>
                     <MessageAttachment v-if="message.attachment" :attachment="message.attachment" />
+                    <span class="chat-bubble__time">{{ formatTime(message.createdAt) }}</span>
                   </div>
                 </article>
               </div>

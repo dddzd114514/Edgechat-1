@@ -1,0 +1,847 @@
+/* ================================================================
+   theme-whatsapp.css — 聊天页 WhatsApp 风格主题覆盖层
+   ----------------------------------------------------------------
+   设计目标：
+   - 仅作用于聊天页（.chat-shell），不污染后台/登录/设置页
+   - 全量模仿 WhatsApp Web 的布局与配色，不改任何功能逻辑
+   - 通过高优先级选择器覆盖 styles.css / styles-liquid.css 既有玻璃风
+   - 单文件单职责：本文件只负责「WhatsApp 主题」这一项视觉呈现
+
+   配色基准（WhatsApp 经典亮色主题）：
+   - 主色 teal：#00a884（在线/发送/选中态）
+   - 聊天底纹：#efeae2（奶油背景 + 淡花纹）
+   - 发送气泡：#d9fdd3（浅绿）
+   - 接收气泡：#ffffff（纯白）
+   - 侧栏底色：#ffffff
+   ================================================================ */
+
+/* ----------------------------------------------------------------
+   1. 聊天外壳：去掉玻璃浮动卡，改为 WhatsApp 贴边的全屏双栏
+   ---------------------------------------------------------------- */
+.chat-shell.page-shell {
+  /* WhatsApp 整体贴边、无外边距，让侧栏与聊天区占满视口 */
+  padding: 0;
+  min-height: 100vh;
+  background: #f0f2f5; /* WhatsApp 网页外层灰底 */
+}
+
+.chat-app {
+  /* 取消居中浮动、圆角、玻璃滤镜，恢复 WhatsApp 平铺外观 */
+  max-width: 100%;
+  height: 100dvh;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: #ffffff; /* 主体白底，侧栏继承 */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* 移除原玻璃卡顶部高光折射线 */
+.chat-app::before {
+  display: none;
+}
+
+/* ----------------------------------------------------------------
+   2. 左侧会话栏：白底、紧凑、WhatsApp 列表观感
+   ---------------------------------------------------------------- */
+.chat-sidebar {
+  /* 纯白实色背景，取消玻璃与光团 */
+  width: 30%;
+  min-width: 340px;
+  max-width: 420px;
+  background: #ffffff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-right: 1px solid #e9edef;
+  gap: 0;
+  padding: 0;
+}
+
+/* 侧栏顶栏：头像 + 新建会话按钮 */
+.chat-sidebar__topbar {
+  padding: 10px 16px;
+  background: #f0f2f5; /* WhatsApp 顶部条略灰 */
+  border-bottom: 1px solid #e9edef;
+  align-items: center;
+}
+
+.chat-sidebar__identity-text strong {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111b21;
+}
+
+.chat-sidebar__identity-text span {
+  font-size: 0.8rem;
+  color: #667781;
+}
+
+/* 侧栏工具按钮（新建群组/私信）调整为 WhatsApp 圆形图标按钮 */
+.chat-sidebar__toolbar .ui-button,
+.chat-sidebar__topbar .ui-button--ghost,
+.chat-sidebar__topbar .ui-button--icon {
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #54656f;
+  box-shadow: none;
+}
+
+.chat-sidebar__toolbar .ui-button:hover:not(:disabled),
+.chat-sidebar__topbar .ui-button--ghost:hover:not(:disabled),
+.chat-sidebar__topbar .ui-button--icon:hover:not(:disabled) {
+  transform: none;
+  background: #e9edef;
+  border: none;
+  box-shadow: none;
+}
+
+/* 侧栏主体列表区 */
+.chat-sidebar__body {
+  flex: 1 1 auto;
+  background: #ffffff;
+}
+
+.chat-sidebar__conversation-list {
+  gap: 0;
+  padding-right: 0;
+  background: #ffffff;
+}
+
+/* 头像在 WhatsApp 中为正圆 */
+.chat-sidebar .ui-avatar,
+.chat-list-item .ui-avatar {
+  border-radius: 50%;
+  border: none;
+  box-shadow: none;
+  background: #d1d7db; /* 无图头像的灰底 */
+  color: #ffffff;
+}
+
+/* 侧栏身份头像也圆 */
+.chat-sidebar__identity .ui-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+}
+
+/* ----------------------------------------------------------------
+   3. 会话列表项：WhatsApp 单行式（头像 + 标题/时间 + 预览）
+   ---------------------------------------------------------------- */
+.chat-list-item {
+  display: grid;
+  grid-template-columns: 49px minmax(0, 1fr);
+  gap: 15px;
+  align-items: center;
+  height: 72px;
+  min-height: 72px;
+  padding: 0 16px;
+  border: none;
+  border-bottom: none;
+  border-radius: 0;
+  background: transparent;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background 0.15s ease;
+}
+
+.chat-list-item:hover {
+  background: #f5f6f6;
+  border-color: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+/* 选中态：WhatsApp 浅灰高亮 */
+.chat-list-item--active {
+  background: #f0f2f5;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.chat-list-item--active:hover {
+  background: #e9edef;
+}
+
+.chat-list-item__body {
+  gap: 3px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+/* 列表项末尾去掉分割线，贴近 WhatsApp */
+.chat-sidebar__conversation-list .chat-list-item:last-child .chat-list-item__body {
+  border-bottom: none;
+}
+
+.chat-list-item__head strong {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #111b21;
+}
+
+.chat-list-item__head span {
+  font-size: 0.8rem;
+  color: #667781;
+}
+
+.chat-list-item__desc {
+  font-size: 0.85rem;
+  color: #667781;
+}
+
+/* ----------------------------------------------------------------
+   4. 侧栏快捷面板（创建群组 / 发起私信）
+   ---------------------------------------------------------------- */
+.chat-quick-actions,
+.chat-sidebar__quick-layer .ui-surface {
+  background: #ffffff;
+  border: 1px solid #e9edef;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(11, 20, 26, 0.15);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.chat-quick-actions__switch .ui-button--default {
+  background: #00a884;
+  border: none;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.chat-quick-actions__switch .ui-button--default:hover:not(:disabled) {
+  background: #008f72;
+  transform: none;
+  box-shadow: none;
+}
+
+.chat-quick-actions__switch .ui-button--secondary {
+  background: #e9edef;
+  border: none;
+  color: #111b21;
+  box-shadow: none;
+}
+
+.chat-quick-actions__switch .ui-button--secondary:hover:not(:disabled) {
+  background: #d1d7db;
+  transform: none;
+  box-shadow: none;
+}
+
+/* 侧栏底栏 */
+.chat-sidebar__footer--simple {
+  padding: 8px 16px;
+  background: #f0f2f5;
+  border-top: 1px solid #e9edef;
+  gap: 6px;
+}
+
+.chat-sidebar__footer--simple .ui-button--ghost {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: #54656f;
+  min-height: 36px;
+  padding: 0 10px;
+  font-size: 0.85rem;
+}
+
+.chat-sidebar__footer--simple .ui-button--ghost:hover:not(:disabled) {
+  background: #e9edef;
+  color: #111b21;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ----------------------------------------------------------------
+   5. 右侧聊天舞台：奶油背景 + 淡花纹（WhatsApp 招牌底纹）
+   ---------------------------------------------------------------- */
+.chat-stage {
+  background-color: #efeae2;
+  /* 用极淡的 SVG 点阵模拟 WhatsApp 的 doodle 背景纹理，不可见时退化为纯奶油色 */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3e%3cg fill='%23d6c7b3' fill-opacity='0.06'%3e%3ccircle cx='60' cy='60' r='5'/%3e%3ccircle cx='180' cy='120' r='4'/%3e%3ccircle cx='300' cy='80' r='6'/%3e%3ccircle cx='100' cy='220' r='4'/%3e%3ccircle cx='240' cy='260' r='5'/%3e%3ccircle cx='340' cy='200' r='3'/%3e%3ccircle cx='40' cy='340' r='6'/%3e%3ccircle cx='160' cy='360' r='4'/%3e%3ccircle cx='280' cy='340' r='5'/%3e%3c/g%3e%3c/svg%3e");
+  background-repeat: repeat;
+}
+
+/* 聊天头部：白底、紧凑、显示名字与状态 */
+.chat-stage__header {
+  min-height: 60px;
+  height: 60px;
+  padding: 10px 16px;
+  background: #f0f2f5;
+  border-bottom: 1px solid #e9edef;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.chat-stage__header-main {
+  gap: 2px;
+}
+
+.chat-stage__header h1 {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #111b21;
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+
+.chat-stage__header p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #667781;
+}
+
+/* 返回按钮（移动端） */
+.chat-stage__back-btn.ui-button {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: #54656f;
+  min-height: 36px;
+  padding: 0 8px;
+}
+
+.chat-stage__back-btn.ui-button:hover:not(:disabled) {
+  background: #e9edef;
+  transform: none;
+  box-shadow: none;
+}
+
+/* 头部状态区：连接状态徽章 + 后台 + 展开成员 */
+.chat-stage__status {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chat-stage__status .ui-badge {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: 0.78rem;
+}
+
+.chat-stage__status .ui-badge--success {
+  color: #00a884;
+}
+
+.chat-stage__status .ui-badge--secondary {
+  color: #667781;
+}
+
+.chat-stage__status .ui-button--secondary {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: #54656f;
+  min-height: 36px;
+  padding: 0 10px;
+}
+
+.chat-stage__status .ui-button--secondary:hover:not(:disabled) {
+  background: #e9edef;
+  color: #111b21;
+  transform: none;
+  box-shadow: none;
+}
+
+/* 展开成员按钮 */
+.expand-member-btn {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: #54656f;
+  padding: 6px 10px;
+}
+
+.expand-member-btn:hover {
+  background: #e9edef;
+  border: none;
+  color: #111b21;
+  transform: none;
+}
+
+/* ----------------------------------------------------------------
+   6. 消息流：消息居中容器，气泡贴边对齐
+   ---------------------------------------------------------------- */
+.chat-stage__workspace,
+.chat-stage__workspace--with-member {
+  /* 成员面板在 WhatsApp 中体现为右侧抽屉，这里保留网格但背景统一 */
+  background: transparent;
+}
+
+.chat-stage__member-pane {
+  background: #ffffff;
+  border-left: 1px solid #e9edef;
+}
+
+.chat-stream {
+  padding: 16px 8%;
+  /* WhatsApp 消息流底部留白，避免被输入框遮挡 */
+}
+
+.chat-stream__inner {
+  max-width: 100%;
+  margin: 0;
+  gap: 4px;
+}
+
+/* 加载更早消息按钮 */
+.chat-stream__older.ui-button {
+  background: #ffffff;
+  border: none;
+  box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+  color: #54656f;
+  font-size: 0.82rem;
+  min-height: 32px;
+  padding: 0 16px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.chat-stream__older.ui-button:hover:not(:disabled) {
+  background: #f0f2f5;
+  transform: none;
+  box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+}
+
+/* 空状态卡片 */
+.chat-empty.ui-surface {
+  background: #ffffff;
+  border: 1px solid #e9edef;
+  border-radius: 8px;
+  box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: #667781;
+  font-size: 0.9rem;
+  padding: 16px 20px;
+}
+
+/* ----------------------------------------------------------------
+   7. 消息气泡：核心——WhatsApp 招牌样式
+   ---------------------------------------------------------------- */
+.chat-bubble-row {
+  align-items: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.chat-bubble-row--own {
+  justify-content: flex-end;
+}
+
+/* 同发送者连续消息：缩小间距，形成 WhatsApp 堆叠观感 */
+.chat-bubble-row--stacked {
+  margin-top: 1px;
+}
+
+/* 连续消息的对方头像淡化（WhatsApp 通常只在首条显示头像） */
+.chat-bubble-row--stacked:not(.chat-bubble-row--own) .ui-avatar {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+/* 消息流中的对方头像：圆形小头像 */
+.chat-stream .chat-bubble-row__avatar.ui-avatar,
+.chat-stream .ui-avatar--sm {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  border: none;
+  box-shadow: none;
+  background: #d1d7db;
+  color: #ffffff;
+}
+
+.chat-bubble {
+  position: relative;
+  /* WhatsApp 气泡宽度上限：相对窄一些，留出对齐空间 */
+  max-width: min(65%, 600px);
+  min-width: 80px;
+  padding: 6px 10px 6px 9px;
+  /* 默认接收气泡：白底、右上小尖、微小阴影 */
+  border-radius: 8px;
+  border-top-left-radius: 0;
+  border: none;
+  background: #ffffff;
+  box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: #111b21;
+  /* 右下留出双勾与时间的位置 */
+}
+
+/* 发送气泡：浅绿 */
+.chat-bubble--own {
+  background: #d9fdd3;
+  color: #111b21;
+  border-radius: 8px;
+  border-top-right-radius: 0;
+  box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+}
+
+/* 取消液态玻璃高光层对本气泡的干扰 */
+.chat-bubble::after {
+  display: none;
+}
+
+/* 连续消息圆角：复用既有 --continued / --tail-hidden 分组逻辑 */
+.chat-bubble--continued {
+  border-top-left-radius: 8px;
+  padding-top: 4px;
+}
+
+.chat-bubble--own.chat-bubble--continued {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  padding-top: 4px;
+}
+
+.chat-bubble--tail-hidden {
+  border-bottom-left-radius: 8px;
+  padding-bottom: 4px;
+}
+
+.chat-bubble--own.chat-bubble--tail-hidden {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding-bottom: 4px;
+}
+
+.chat-bubble--continued.chat-bubble--tail-hidden {
+  border-radius: 8px;
+}
+
+.chat-bubble--own.chat-bubble--continued.chat-bubble--tail-hidden {
+  border-radius: 8px;
+}
+
+/* 发送者名：仅对方气泡顶部显示，WhatsApp 风绿色名（群聊区分发送者） */
+.chat-bubble__sender {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #06cf9c; /* WhatsApp 接收气泡发送者名的绿色 */
+  line-height: 1.3;
+}
+
+/* 气泡内时间戳：绝对定位到气泡右下角，淡灰色 */
+.chat-bubble__time {
+  display: inline-block;
+  float: right;
+  margin: 4px 0 0 8px;
+  font-size: 0.68rem;
+  line-height: 1;
+  color: #667781;
+  /* 让时间「浮」在最后一行右下，模仿 WhatsApp 双勾时间排布 */
+  user-select: none;
+}
+
+/* 自己消息的时间同样右下浮动 */
+.chat-bubble--own .chat-bubble__time {
+  color: #667781;
+}
+
+/* 气泡正文 */
+.chat-bubble p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* 消息内附件链接 */
+.chat-bubble__attachment,
+.chat-bubble--own .chat-bubble__attachment {
+  color: #027eb5; /* WhatsApp 链接蓝 */
+  font-weight: 400;
+}
+
+/* ----------------------------------------------------------------
+   8. 输入框：WhatsApp 底部白色圆角胶囊 + 圆形发送按钮
+   ---------------------------------------------------------------- */
+.chat-composer-shell {
+  padding: 8px 16px;
+  background: #f0f2f5;
+  border-top: 1px solid #e9edef;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  gap: 0;
+}
+
+.chat-composer__attachment,
+.chat-composer__error {
+  max-width: 100%;
+}
+
+.chat-composer__field {
+  max-width: 100%;
+  min-height: auto;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.chat-composer__field:focus-within {
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* 附件（加号）与发送按钮：圆形灰底图标 */
+.chat-composer__field .ui-button--ghost,
+.chat-composer__field .ui-button--icon,
+.chat-composer .ui-button {
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #54656f;
+  box-shadow: none;
+}
+
+.chat-composer__field .ui-button--ghost:hover:not(:disabled),
+.chat-composer__field .ui-button--icon:hover:not(:disabled) {
+  background: #f0f2f5;
+  transform: none;
+  box-shadow: none;
+}
+
+/* 发送按钮：WhatsApp teal 圆形 */
+.chat-composer__field .ui-button--default {
+  background: #00a884;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.chat-composer__field .ui-button--default:hover:not(:disabled) {
+  background: #008f72;
+  transform: none;
+  box-shadow: none;
+}
+
+.chat-composer__field .ui-button--default:disabled {
+  background: #d1d7db;
+  color: #ffffff;
+}
+
+/* 输入文本域：透明、无焦点环、贴近 WhatsApp 字号 */
+.chat-composer__input.ui-textarea {
+  min-height: 24px;
+  height: auto;
+  max-height: 140px;
+  padding: 9px 4px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* ----------------------------------------------------------------
+   9. 成员管理面板（群组）：白底卡片，WhatsApp 风信息侧栏
+   ---------------------------------------------------------------- */
+.chat-room-manage.ui-surface {
+  background: #ffffff;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding: 16px;
+  gap: 12px;
+}
+
+.chat-room-manage.ui-surface::after {
+  display: none;
+}
+
+.chat-room-manage__header strong {
+  font-size: 1rem;
+  color: #111b21;
+}
+
+.chat-room-manage__header p {
+  color: #667781;
+}
+
+/* 群组成员 chip：圆头像 + 姓名 */
+.chat-room-manage .ui-avatar {
+  border-radius: 50%;
+  border: none;
+  box-shadow: none;
+  background: #d1d7db;
+  color: #ffffff;
+}
+
+.member-chip {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #f0f2f5;
+  border-radius: 0;
+  padding: 10px 0;
+}
+
+.member-chip__text strong {
+  color: #111b21;
+}
+
+.member-chip__text span {
+  color: #667781;
+}
+
+/* 徽章在白底中的样式 */
+.chat-room-manage .ui-badge--default {
+  background: #e9edef;
+  color: #111b21;
+  border: none;
+}
+
+.chat-room-manage .ui-badge--success {
+  background: #d9fdd3;
+  color: #008f72;
+  border: none;
+}
+
+/* 收起按钮 */
+.collapse-btn {
+  background: transparent;
+  border: none;
+  color: #54656f;
+  box-shadow: none;
+}
+
+.collapse-btn:hover {
+  background: #e9edef;
+  border: none;
+  color: #111b21;
+  transform: none;
+}
+
+/* 群组信息编辑弹层：白底卡片 */
+.chat-group-editor {
+  background: rgba(11, 20, 26, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.chat-group-editor__panel.ui-surface {
+  background: #ffffff;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 24px 80px rgba(11, 20, 26, 0.45);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.chat-group-editor__panel.ui-surface::after {
+  display: none;
+}
+
+.chat-group-editor__avatar-tile {
+  border-radius: 8px;
+}
+
+.chat-group-editor__field span {
+  color: #008f72;
+}
+
+/* ----------------------------------------------------------------
+   10. 通用：覆盖 UI 组件在聊天页内的玻璃观感
+        （用 .chat-shell 作用域限制，不影响其它页面）
+   ---------------------------------------------------------------- */
+.chat-shell .ui-button {
+  font-weight: 500;
+}
+
+.chat-shell .ui-surface::after {
+  display: none;
+}
+
+/* 滚动条：WhatsApp 细而淡 */
+.chat-shell .chat-sidebar__conversation-list,
+.chat-shell .chat-stream,
+.chat-shell .chat-room-manage__body,
+.chat-shell .chat-quick-actions,
+.chat-shell .member-picker-list,
+.chat-shell .chat-composer__input.ui-textarea {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.chat-shell .chat-sidebar__conversation-list::-webkit-scrollbar,
+.chat-shell .chat-stream::-webkit-scrollbar,
+.chat-shell .chat-room-manage__body::-webkit-scrollbar,
+.chat-shell .chat-quick-actions::-webkit-scrollbar,
+.chat-shell .member-picker-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-shell .chat-sidebar__conversation-list::-webkit-scrollbar-thumb,
+.chat-shell .chat-stream::-webkit-scrollbar-thumb,
+.chat-shell .chat-room-manage__body::-webkit-scrollbar-thumb,
+.chat-shell .chat-quick-actions::-webkit-scrollbar-thumb,
+.chat-shell .member-picker-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+}
+
+/* ----------------------------------------------------------------
+   11. 响应式：移动端 WhatsApp 单栏切换
+   ---------------------------------------------------------------- */
+@media (max-width: 960px) {
+  .chat-app {
+    grid-template-columns: 1fr;
+    height: 100dvh;
+  }
+
+  .chat-sidebar {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    min-height: 100vh;
+  }
+
+  /* 移动端消息流减小左右内边距 */
+  .chat-stream {
+    padding: 16px 5%;
+  }
+
+  /* 移动端气泡放宽到 80% */
+  .chat-bubble {
+    max-width: 80%;
+  }
+
+  .chat-stage__header {
+    height: auto;
+    min-height: 54px;
+    padding: 8px 12px;
+  }
+
+  .chat-composer-shell {
+    padding: 8px 10px;
+  }
+}
