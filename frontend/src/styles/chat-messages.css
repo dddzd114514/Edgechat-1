@@ -33,66 +33,45 @@
 
 .chat-bubble {
   max-width: min(78%, 720px);
-  padding: 14px 16px;
-  border-radius: 22px 22px 22px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.46);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.34)),
-    rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 14px rgba(62, 49, 32, 0.05);
-  backdrop-filter: var(--blur-md);
-  -webkit-backdrop-filter: var(--blur-md);
-  transition:
-    border-color var(--transition-soft),
-    background var(--transition-soft);
+  padding: 6px 7px 8px 9px;
+  border-radius: 7.5px;
+  background: #ffffff;
+  box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+  position: relative;
 }
 
 .chat-bubble--own {
-  border-color: rgba(45, 156, 151, 0.22);
-  border-radius: 22px 22px 10px 22px;
-  background:
-    linear-gradient(180deg, rgba(46, 134, 125, 0.9), rgba(34, 109, 103, 0.84)),
-    rgba(45, 156, 151, 0.8);
-  color: #f6fbfa;
-  box-shadow: 0 4px 14px rgba(45, 156, 151, 0.12);
+  border-radius: 7.5px;
+  background: #dcf8c6;
+  color: #000000;
+  box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
 }
 
-/* 连续消息：隐藏上边框，形成无缝堆叠 */
+/* 连续消息：简化圆角 */
 .chat-bubble--continued {
-  border-radius: 6px 22px 22px 10px;
-  border-top: none;
-  padding-top: 6px;
+  border-radius: 7.5px;
 }
 
 .chat-bubble--own.chat-bubble--continued {
-  border-radius: 22px 6px 10px 22px;
-  border-top: none;
+  border-radius: 7.5px;
 }
 
-/* 尾部消息：隐藏下边框，avatar 缩小 */
+/* 尾部消息 */
 .chat-bubble--tail-hidden {
-  border-radius: 22px 22px 6px 10px;
-  border-bottom: none;
-  padding-bottom: 6px;
+  border-radius: 7.5px;
 }
 
 .chat-bubble--own.chat-bubble--tail-hidden {
-  border-radius: 22px 22px 22px 6px;
-  border-bottom: none;
+  border-radius: 7.5px;
 }
 
-/* 首尾都有：单独一条消息时不应用 */
-
+/* 首尾都有 */
 .chat-bubble--continued.chat-bubble--tail-hidden {
-  border-radius: 6px 22px 6px 10px;
-  border-top: none;
-  border-bottom: none;
-  padding-top: 6px;
-  padding-bottom: 6px;
+  border-radius: 7.5px;
 }
 
 .chat-bubble--own.chat-bubble--continued.chat-bubble--tail-hidden {
-  border-radius: 22px 6px 22px 6px;
+  border-radius: 7.5px;
 }
 
 .chat-bubble__meta {
@@ -100,23 +79,24 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 8px;
-  font-size: 0.78rem;
+  margin-bottom: 2px;
+  font-size: 12px;
 }
 
 .chat-bubble__meta span {
-  color: var(--text-faint);
+  color: #667781;
 }
 
 .chat-bubble--own .chat-bubble__meta span {
-  color: rgba(246, 251, 250, 0.72);
+  color: #667781;
 }
 
 .chat-bubble p {
   margin: 0;
-  line-height: 1.6;
+  line-height: 1.4;
   white-space: pre-wrap;
   word-break: break-word;
+  font-size: 14.2px;
 }
 
 .chat-bubble__attachment {
